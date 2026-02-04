@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo App</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<button class="add-button" id="addBtn">+ Add Task</button>
+
+<div class="sections">
+    <div class="section todo">
+        <h2>To Do</h2>
+    </div>
+    <div class="section inprogress">
+        <h2>In Progress</h2>
+    </div>
+    <div class="section done">
+        <h2>Done</h2>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Task</h2>
+        <form id="taskForm">
+            <label>Task Name:</label>
+            <input type="text" id="task" required>
+
+            <label>Status:</label>
+            <select id="status">
+                <option value="todo">To Do</option>
+                <option value="inprogress">In Progress</option>
+                <option value="done">Done</option>
+            </select>
+
+            <label>Deadline:</label>
+            <input type="time" id="deadline">
+
+            <button type="submit">Add Task</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-edit">&times;</span>
+        <h2>Edit Task</h2>
+        <form id="editForm">
+            <label>Task Name:</label>
+            <input type="text" id="editTask" required>
+
+            <label>Status:</label>
+            <select id="editStatus">
+                <option value="todo">To Do</option>
+                <option value="inprogress">In Progress</option>
+                <option value="done">Done</option>
+            </select>
+
+            <label>Deadline:</label>
+            <input type="time" id="editDeadline">
+
+            <button type="submit">Update Task</button>
+            <button type="button" id="deleteTask">Delete Task</button>
+        </form>
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
