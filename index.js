@@ -1,5 +1,6 @@
 let todo = [];
 
+// DOM Elements
 const addBtn = document.getElementById("addBtn");
 const modal = document.getElementById("modal");
 const closeBtn = document.querySelector(".close");
@@ -12,7 +13,7 @@ const deleteBtn = document.getElementById("deleteTask");
 
 let currentEditIndex = null;
 
-// Show/hide modals
+// Show / hide modals
 addBtn.onclick = () => modal.style.display = "block";
 closeBtn.onclick = () => modal.style.display = "none";
 closeEdit.onclick = () => editModal.style.display = "none";
@@ -30,56 +31,68 @@ function loadTodo() {
     }
 }
 
-// Render tasks with color-coded deadlines
+// Render tasks with TIME-based color logic
 function renderTodo() {
     document.querySelector(".todo").innerHTML = "<h2>To Do</h2>";
     document.querySelector(".inprogress").innerHTML = "<h2>In Progress</h2>";
     document.querySelector(".done").innerHTML = "<h2>Done</h2>";
 
     const now = new Date();
+    const oneHour = 60 * 60 * 1000;
 
     todo.forEach((t, index) => {
-        let color = "green"; // default green
+        let color = "green";
 
-        if (t.deadline && t.createdAt) {
-            const deadlineDate = new Date(t.deadline);
-            const startDate = new Date(t.createdAt); // use task creation date
-            const totalTime = deadlineDate - startDate; // total ms
-            const timeLeft = deadlineDate - now; // remaining ms
-            const percentLeft = Math.max(0, (timeLeft / totalTime) * 100);
+        if (t.deadline) {
+            const [hours, minutes] = t.deadline.split(":");
 
-            if (percentLeft < 50 && percentLeft > 0) {
-                color = "yellow";
-            } else if (percentLeft <= 0) {
-                color = "maroon";
+            const deadlineDate = new Date();
+            deadlineDate.setHours(hours, minutes, 0, 0);
+
+            const timeLeft = deadlineDate - now;
+
+            if (timeLeft <= 0) {
+                color = "maroon";      
+            } else if (timeLeft <= oneHour) {
+                color = "yellow";      
+            } else {
+                color = "green";
             }
         }
 
-        const itemBtn = `<button style="background-color:${color}" onclick="editTask(${index})">${t.title}</button>`;
+        const itemBtn = `
+            <button
+                style="background-color:${color}; color:black;"
+                onclick="editTask(${index})"
+            >
+                ${t.title}
+            </button>
+        `;
 
         if (t.progress === "todo") {
             document.querySelector(".todo").innerHTML += `<div class="item">${itemBtn}</div>`;
-        } else if (t.progress === "inprogress") {
+        } 
+        else if (t.progress === "inprogress") {
             document.querySelector(".inprogress").innerHTML += `<div class="item">${itemBtn}</div>`;
-        } else if (t.progress === "done") {
+        } 
+        else if (t.progress === "done") {
             document.querySelector(".done").innerHTML += `<div class="item">${itemBtn}</div>`;
         }
     });
 }
 
 // Add new task
-form.addEventListener("submit", function(e){
+form.addEventListener("submit", function (e) {
     e.preventDefault();
+
     const title = document.getElementById("task").value;
     const progress = document.getElementById("status").value;
     const deadlineInput = document.getElementById("deadline").value;
 
     todo.push({
-        no: todo.length + 1,
         title,
-        deadline: deadlineInput,
         progress,
-        createdAt: new Date().toISOString() // store creation date
+        deadline: deadlineInput
     });
 
     saveTodo();
@@ -89,18 +102,21 @@ form.addEventListener("submit", function(e){
 });
 
 // Edit task
-window.editTask = function(index) {
+window.editTask = function (index) {
     currentEditIndex = index;
     const task = todo[index];
+
     document.getElementById("editTask").value = task.title;
     document.getElementById("editStatus").value = task.progress;
     document.getElementById("editDeadline").value = task.deadline;
 
     editModal.style.display = "block";
-}
+};
 
-editForm.addEventListener("submit", function(e){
+// Update task
+editForm.addEventListener("submit", function (e) {
     e.preventDefault();
+
     const task = todo[currentEditIndex];
     task.title = document.getElementById("editTask").value;
     task.progress = document.getElementById("editStatus").value;
@@ -112,16 +128,16 @@ editForm.addEventListener("submit", function(e){
 });
 
 // Delete task
-deleteBtn.onclick = function() {
+deleteBtn.onclick = function () {
     todo.splice(currentEditIndex, 1);
     saveTodo();
     renderTodo();
     editModal.style.display = "none";
-}
+};
 
-// Load tasks and render on page load
+// Initial load
 loadTodo();
 renderTodo();
 
-// Optional: auto-update colors every minute
-setInterval(renderTodo, 60000);
+// Refresh colors every 30 seconds
+setInterval(renderTodo, 30000);
